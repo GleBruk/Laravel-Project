@@ -6,6 +6,7 @@
 
     class BlogController extends Controller {
         public function blog(){
+            // Устанавливаем данные
             $data = array(
                 'title' => 'Blog',
                 'posts' => array(
@@ -26,6 +27,7 @@
                         'post_content' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
                     ]));
 
+            // Вызываем шаблон страницы блога и передаём данные
             return view('static.blog')->with($data);
         }
     }

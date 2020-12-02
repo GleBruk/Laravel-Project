@@ -14,6 +14,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
+        // При обращении к методам UserController, выводится страница авторизации
         $this->middleware('auth');
     }
 
@@ -24,8 +25,11 @@ class UserController extends Controller
      */
     public function index()
     {
+        // Получаем id авторизованного пользователя
         $user_id = auth()->user()->id;
+        // Берём статьи пользователя из БД по полученному id пользователя
         $user = User::find($user_id);
+        // Вызываем шаблон личного кабинета пользователя и передаём данные
         return view('user')->with('articles', $user->articles);
     }
 }

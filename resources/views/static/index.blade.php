@@ -6,9 +6,7 @@
 
 @section(('content'))
     <div class="jumbotron text-center">
-        <h1>Главная страница</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reprehenderit saepe unde? Amet
-            assumenda distinctio eaque facere, in, ipsam, laborum maxime necessitatibus nihil unde veritatis
-            voluptas. Asperiores, error, officia.</p>
+        <h1>Блог земноводных и пресмыкающихся</h1>
+        <p>Сайт про лягушек, жаб и других представителей фауны</p>
     </div>
 @endsection

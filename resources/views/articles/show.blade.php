@@ -13,9 +13,13 @@
         <p>{!! $data['article']->text !!}</p>
         <p>Дата создания: {{ $data['article']->created_at }}</p>
     </div>
+    <!-- Выводим комментарии через цикл -->
     @if(count($data['comments']) > 0)
         @foreach($data['comments'] as $comm)
-            <div class="alert alert-info">{{ $comm->text }}</div>
+            <div class="alert alert-info">
+                <h3>{{$comm->user->name}}</h3>
+                {{ $comm->text }}
+            </div>
         @endforeach
     @endif
 
@@ -25,11 +29,13 @@
         {{ Form::label('text', 'Комментарий') }}
         {{ Form::textarea('text', '', ['class' => 'form-control', 'placeholder' => 'Введите комментарий']) }}
     </div>
-    {{--    нам необходимо в форму также передавать id статьи, ибо это поле также необходимо помещать в таблицу с комментариями--}}
+    {{-- Нам необходимо в форму также передавать id статьи, ибо это поле также необходимо
+    помещать в таблицу с комментариями --}}
     {{ Form::hidden('article_id', $data['article']->id) }}
     {{ Form::submit('Добавить', ['class' => 'btn btn-success']) }}
     {!! Form::close() !!}
-    @if(!Auth::guest())<!--Если пользоваетель авторизован -->
+    {{-- Если пользователь авторизован и смотрит свою статью, то он может её удалить --}}
+    @if(!Auth::guest())
         @if(Auth::user()->id == $data['article']->user_id)
             <hr>
             <a href="/public/articles/{{$data['article']->id}}/edit" class="btn btn-warning">Редактировать</a>

@@ -40,7 +40,9 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
+                        <!-- Если пользователь не авторизован, то выводим ссылки на авторизацию
+                        и регистрацию. Иначе выводим ссылки на кабинет пользователя,
+                        создание статьи и выход -->
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">Войти</a>

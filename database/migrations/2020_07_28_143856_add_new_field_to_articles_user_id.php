@@ -14,7 +14,7 @@ class AddNewFieldToArticlesUserId extends Migration
     public function up()
     {
         Schema::table('articles', function (Blueprint $table) {
-            $table->integer('user_id');//добавляем новое поле в таблицу
+            $table->integer('user_id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddNewFieldToArticlesUserId extends Migration
     public function down()
     {
         Schema::table('articles', function (Blueprint $table) {
-                $table->dropColumn('user_id');//удаляет поле из таблицы
+                $table->dropColumn('user_id');
         });
     }
 }

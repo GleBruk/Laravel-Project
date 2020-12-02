@@ -38,6 +38,7 @@ class User extends Authenticatable
     ];
 
     public function articles(){
-        return $this->hasMany('App\Article');// каждый пользователь может иметь множество Article
+        // Указываем, что пользователь может иметь множество статей
+        return $this->hasMany('App\Article');
     }
 }

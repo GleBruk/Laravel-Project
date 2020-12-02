@@ -1,6 +1,8 @@
 @extends('layout.main')
 
 @section(('content'))
+    <!-- Если передаются товары из контроллера, то выводим их через цикл. Иначе выводим
+    сообщение, что их нет -->
     @if(count($items) > 0)
         @foreach($items as $el)
             <div class="alert alert-info">

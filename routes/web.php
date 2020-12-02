@@ -1,15 +1,5 @@
 <?php
 
-
-/*
-Route::get('/hello', function () {
-    return 'Hello World!';
-});
-
-Route::post('/hello', function () {
-    return view('welcome');
-});
-*/
 Route::get('/', 'StaticController@index');//вызываем функцию index у контроллера StaticController
 
 Route::get('/about us', 'StaticController@about');

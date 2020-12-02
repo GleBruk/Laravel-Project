@@ -6,7 +6,7 @@
 
 @section('content')
     <h1>Все статьи на сайте</h1>
-
+    <!-- Выводим все статьи через цикл -->
     @if(count($articles) > 0)
         @foreach($articles as $el)
             <div class="well">
@@ -16,7 +16,7 @@
                 <p><b>Автор: </b>{{$el->user->name}}</p>
             </div>
         @endforeach
-        {{ $articles->links() }}<!-- //переключает статьи с помощью пагинации -->
+        {{ $articles->links() }}<!-- Вызываем пагинацию -->
     @else
         <p>На данный момент статей нет</p>
     @endif

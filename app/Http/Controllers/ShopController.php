@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Shop;
 use Illuminate\Http\Request;
 
@@ -14,7 +13,9 @@ class ShopController extends Controller
      */
     public function index()
     {
+        // Берём данные товаров из БД
         $items = Shop::all();
+        // Вызываем шаблон страницы с товарами и передём данные
         return view ('shop.index')->with('items', $items);
     }
 
@@ -47,7 +48,9 @@ class ShopController extends Controller
      */
     public function show($id)
     {
+        // Берём данные товара из БД по id указанному в аргументе
         $item = Shop::find($id);
+        // Вызываем шаблон страницы товара и передаём данные
         return view('shop.show')->with('item', $item);
     }
 

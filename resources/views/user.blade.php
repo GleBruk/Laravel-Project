@@ -8,12 +8,14 @@
                 <div class="card-header">Кабинет пользователя</div>
 
                 <div class="card-body">
+                    <!-- Если передаются сообщения об ошибках или успехе, то выводим их-->
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
                         </div>
                     @endif
 
+                    <!-- Если у пользователя есть статьи, то выводим их через цикл -->
                     @if(count($articles) > 0)
                         @foreach($articles as $el)
                             <div class="alert alert-info">

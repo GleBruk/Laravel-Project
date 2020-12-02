@@ -14,8 +14,9 @@ class ArticlesController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show']]);//требует
-        // авторизации при обращении к моделям Articles кроме index и show
+        // При обращении к методам Articles, выводится страница авторизации, кроме методов
+        // index и show
+        $this->middleware('auth', ['except' => ['index', 'show']]);
     }
 
     /**
@@ -25,13 +26,9 @@ class ArticlesController extends Controller
      */
     public function index()
     {
-        //$articles = Article::all();
-        //$articles = Article::orderBy('created-at', 'asc')->get();
-       // $articles = Article::where('title', 'First article')->get();
-       //$articles = DB::select('SELECT * FROM `articles`');
-        //$articles = Article::orderBy('created_at', 'desc')->take(2)->get();
-        $articles = Article::orderBy('created_at', 'desc')->paginate(1);//позволяет переключать статьи
-        // в index.blade.php
+        // Берём статьи из БД и вызываем пагинацию
+        $articles = Article::orderBy('created_at', 'desc')->paginate(1);
+        //Вызываем шаблон страницы со всеми статьями и пагинацией
         return view('articles.index')->with('articles', $articles);
     }
 
@@ -40,8 +37,9 @@ class ArticlesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()//вызывает шаблон, с помощью которого создаётся статья
+    public function create()
     {
+        // Вызываем шаблон для создания статьи
         return view('articles.create');
     }
 
@@ -51,43 +49,65 @@ class ArticlesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)//функция сохраняет новую запись в базе данных
+    public function store(Request $request)
     {
+        // Если из формы передаётся id статьи, то происходит добавление комментария
         if($request->input('article_id') > 0) {
-            // Идет добавление комментария, поэтому работаем как с комментарием
+            // Делаем новый объект
             $comment = new Comment();
+            // Устанавливаем id пользователя
+            $comment->user_id = auth()->user()->id;
+            // Устанавливаем id статьи
             $comment->article_id = $request->input('article_id');
+            // Устанавливаем текст комментария
             $comment->text = $request->input('text');
+            // Добавляем в БД
             $comment->save();
-            return redirect('/articles/'.$request->input('article_id'))->with('success', 'Комментарий добавлен');
+            // Переадресовываем на страницу статьи и выводим сообщение
+            return redirect('/articles/'.$request->input('article_id'))->with('success',
+                'Комментарий добавлен');
         }
 
-        $this->validate($request, [//функция проверяет значения из формы
-            'title' => 'required|max:190',// 190 - максимальное значение, которое можно добавить в title
-            'text' => 'required|min:20',//конкретные значения, которая должна проверить функция
-            'main_image' => 'nullable|image|max:1999'//позволяет полю быть либо пустым либо картинкой
+        // Проводим валидацию
+        $this->validate($request, [
+            'title' => 'required|max:190',
+            'text' => 'required|min:20',
+            'main_image' => 'nullable|image|max:1999'//позволяет полю быть либо пустым либо
+            // картинкой
         ]);
 
+        // Если из формы передаётся изображение, то добавляем её в БД
         if($request->hasFile('main_image')){
+            // Получаем название изображения
             $file = $request->file('main_image')->getClientOriginalName();
 
+            // Получаем название изображения без расширения
             $image_name_without_ext = pathinfo($file, PATHINFO_FILENAME);
 
-            $ext= $request->file('main_image')->getClientOriginalExtension();
+            // Получаем расширение изображения
+            $ext = $request->file('main_image')->getClientOriginalExtension();
 
+            // Делаем новое название изображения добавляя текущее время
             $image_name = $image_name_without_ext."_".time().".".$ext;
+            // Сохраняем изображение с новым названием
             $path = $request->file('main_image')->storeAs('public/images', $image_name);
-
         } else
             $image_name = 'noimage.jpg';
 
+        // Создаём новую статью
         $article = new Article();
+        // Устанавливаем заголовок статьи
         $article->title = $request->input('title');
+        // Устанавливаем текст статьи
         $article->text = $request->input('text');
-        $article->user_id = auth()->user()->id;//user_id равен id авторизованного пользователя
+        // Устанавливаем id пользователя
+        $article->user_id = auth()->user()->id;
+        // Устанавливаем изображение
         $article->image = $image_name;
+        // Добавляем в БД
         $article->save();
 
+        // Переадресовываем на страницу со всеми статьями  и выводим сообщение
         return redirect('/articles')->with('success', 'Статья была добавлена');
     }
 
@@ -97,12 +117,16 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)//отображает определённую статью по ID
+    public function show($id)
     {
+        // Берём данные статьи из БД по id из аргумента
         $article = Article::find($id);
 
+        // Берём комментарии из БД по id статьи
         $comments = Comment::where('article_id', $id)->get();
+        // Устанавливаем данные
         $data = ['article' => $article, 'comments' => $comments];
+        // Вызываем шаблон для просмотра статьи и передаём данные
         return view('articles.show')->with('data', $data);
     }
 
@@ -112,13 +136,16 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)//позволяет редактировать статью
+    public function edit($id)
     {
+        // Берём данные статьи из БД по id из аргумента
         $article = Article::find($id);
 
+        // Если пользователь хочет отредактировать не свою статью, то выводится ошибка
         if(auth()->user()->id != $article->user_id)
             return redirect('/articles')->with('error', 'Это не ваша статья');
 
+        // Вызываем шаблон для редактирования статьи и передаём данные
         return view('articles.edit')->with('article', $article);
     }
 
@@ -129,38 +156,54 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)//принимает запрос и ID статьи и обновляет саму статью
+    public function update(Request $request, $id)
     {
+        // Проводим валидацию
         $this->validate($request, [
             'title' => 'required|max:190',
             'text' => 'required|min:20',
         ]);
 
+        // Если передаются данные нового изображения, то обновляем его
         if($request->hasFile('main_image')){
+            // Получаем название изображения
             $file = $request->file('main_image')->getClientOriginalName();
 
+            // Получаем название изображения без расширения
             $image_name_without_ext = pathinfo($file, PATHINFO_FILENAME);
 
-            $ext= $request->file('main_image')->getClientOriginalExtension();
+            // Получаем расширение изображения
+            $ext = $request->file('main_image')->getClientOriginalExtension();
 
+            // Делаем новое название изображения добавляя текущее время
             $image_name = $image_name_without_ext."_".time().".".$ext;
-            $path = $request->file('main_image')->storeAs('public/images', $image_name);
+            // Сохраняем новое изображение
+            $path = $request->file('main_image')->storeAs('public/images',
+                $image_name);
 
         }
 
+        // Берём данные статьи из БД по id статьи из аргумента
         $article = Article::find($id);
+        // Устанавливаем новый заголовок статьи
         $article->title = $request->input('title');
+        // Устанавливаем новй текст статьи
         $article->text = $request->input('text');
 
+        // Если пользователь изменил фотографию и название старой фотографии не noimage.jpg, то
+        // тогда удаляем старую фотографию
         if($request->hasFile('main_image')) {
-            if($article->image != "moimage.jpg")
+            if($article->image != "noimage.jpg")
                 Storage::delete('public/images/'.$article->image);
 
+            // Устанавливаем новую фотографию
             $article->image = $image_name;
         }
 
+        // Сохраняем статью
         $article->save();
 
+        // Переадресовываем на страницу со всеми статьями и выводим сообщение
         return redirect('/articles')->with('success', 'Статья была обновлена');
     }
 
@@ -170,17 +213,22 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)//удаляет статью
+    public function destroy($id)
     {
+        // Берём данные статьи из БД по id статьи из аргумента
         $article = Article::find($id);
 
+        // Если пользователь хочет удалить не свою статью, то выводим ошибку
         if(auth()->user()->id != $article->user_id)
             return redirect('/articles')->with('error', 'Это не ваша статья');
 
-        if($article->image != "moimage.jpg")
+        // Если название изображения статьи не noimage.jpg, то удаляем изображение
+        if($article->image != "noimage.jpg")
             Storage::delete('public/images/'.$article->image);
 
+        // Удаляем статью
         $article->delete();
+        // Переадресовываем на страницу со всеми статьями и выводим сообщение
         return redirect('/articles')->with('success', 'Статья была удалена');
     }
 }

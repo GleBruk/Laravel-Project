@@ -15,8 +15,8 @@ class CreateArticlesTable extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('title');//string == VARCHAR, title - название столбца
-            $table->mediumText('text');//mediumText == text
+            $table->string('title');
+            $table->mediumText('text');
             $table->timestamps();
         });
     }

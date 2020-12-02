@@ -11,9 +11,7 @@ class Article extends Model
     public $timestamps = true;
 
     public function user(){
-        return $this->belongsTo('App\User');//запись созданная с помощью Article, также будет
-        // принадлежать 1 User
+        // Указываем, что статья будет принадлежать пользователю, который её создал
+        return $this->belongsTo('App\User');
     }
 }
-
-//Article::all();//выводит все статьи закреплённые этой моделью(таблица articles)

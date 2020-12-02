@@ -1,10 +1,11 @@
-@extends('layout.main')
+@extends('layouts.app')
 
 @section('page-title')
     {{$title}}
 @endsection
 
 @section(('content'))
+    <!-- Если из контроллера передаются записи, то выводим их через цикл -->
     @if(count($posts) > 0)
         @foreach($posts as $post)
             <div class="alert alert-info">
